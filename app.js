@@ -58,7 +58,7 @@ var purchase = function(){
 		//places these responses in the variable custPurchase
 		var custPurchase = {
 			item_id: res.item_id,
-			Quantity: res.Quantity
+			stock_quantity: res.stock_quantity
 		};
 		
 		//the variable established above is pushed to the productPurchased array defined at the top of the page
@@ -69,12 +69,12 @@ var purchase = function(){
 				if(err) console.log(err, 'That item ID doesn\'t exist');
 				
 				//if the stock quantity available is less than the amount that the user wanted to purchase then the user will be alerted that the product is out of stock
-				if(res[0].StockQuantity < productPurchased[0].Quantity){
+				if(res[0].stock_quantity < productPurchased[0].stock_quantity){
 					console.log('That product is out of stock!');
 					connection.end();
 
 				//otherwise if the stock amount available is more than or equal to the amount being asked for then the purchase is continued and the user is alerted of what items are being purchased, how much one item is and what the total amount is
-				} else if(res[0].StockQuantity >= productPurchased[0].Quantity){
+				} else if(res[0].stock_quantity >= productPurchased[0].stock_quantity){
 
 					console.log('');
 
@@ -83,7 +83,7 @@ var purchase = function(){
 					console.log(res[0].product_name + ' ' + res[0].price);
 
 					//this creates the variable SaleTotal that contains the total amount the user is paying for this total puchase
-					var saleTotal = res[0].price * productPurchased[0].Quantity;
+					var saleTotal = res[0].price * productPurchased[0].stock_quantity;
 
 					//connect to the mysql database Departments and updates the saleTotal for the id of the item purchased
 					connection.query("UPDATE Departments SET TotalSales = ? WHERE department_name = ?;", [saleTotal, res[0].department_name], function(err, resultOne){
