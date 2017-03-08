@@ -45,7 +45,7 @@ var purchase = function(){
 	//creates the questions that will be prompted to the user
 	var productInfo = {
 		properties: {
-			itemID:{description: colors.blue('Please enter the ID # of the item you wish to purchase!')},
+			item_id:{description: colors.blue('Please enter the ID # of the item you wish to purchase!')},
 			Quantity:{description: colors.green('How many items would you like to purchase?')}
 		},
 	};
@@ -57,7 +57,7 @@ var purchase = function(){
 
 		//places these responses in the variable custPurchase
 		var custPurchase = {
-			itemID: res.itemID,
+			item_id: res.item_id,
 			Quantity: res.Quantity
 		};
 		
@@ -65,7 +65,7 @@ var purchase = function(){
 		productPurchased.push(custPurchase);
 
 		//connects to the mysql database and selects the item the user selected above based on the item id number entered
-		connection.query('SELECT * FROM products WHERE ItemID=?', productPurchased[0].itemID, function(err, res){
+		connection.query('SELECT * FROM products WHERE item_id=?', productPurchased[0].item_id, function(err, res){
 				if(err) console.log(err, 'That item ID doesn\'t exist');
 				
 				//if the stock quantity available is less than the amount that the user wanted to purchase then the user will be alerted that the product is out of stock
