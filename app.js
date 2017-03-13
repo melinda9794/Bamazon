@@ -15,7 +15,7 @@ var productPurchased = [];
 connection.connect();
 
 //connect to the mysql database and pull the information from the Products database to display to the user
-connection.query('SELECT item_id, product_name, price, stock_quantity FROM products', function(err, result){
+connection.query('SELECT item_id, product_name, price, stock_quantity FROM products;', function(err, result){
 	if(err) console.log(err);
 
 	//creates a table for the information from the mysql database to be placed
@@ -27,11 +27,11 @@ connection.query('SELECT item_id, product_name, price, stock_quantity FROM produ
 			colAligns: ['center'],
 		}
 	});
-
+		console.log(result)
 	//loops through each item in the mysql database and pushes that information into a new row in the table
 	for(var i = 0; i < result.length; i++){
 		table.push(
-			[result[i].item_id, result[i].product_name, result[i].price]
+			[result[i].item_id, result[i].product_name, result[i].price,result[i].stock_quantity]
 		);
 	}
 	console.log(table.toString());
@@ -47,6 +47,7 @@ var purchase = function(){
 		properties: {
 			item_id:{description: colors.blue('Please enter the ID # of the item you wish to purchase!')},
 			Quantity:{description: colors.green('How many items would you like to purchase?')}
+			// Quantity is your key for RESPOND GO line 60
 		},
 	};
 
@@ -54,11 +55,12 @@ var purchase = function(){
 
 	//gets the responses to the prompts above
 	prompt.get(productInfo, function(err, res){
-
+				console.log(res) // res.item.id  // res.Quantity
 		//places these responses in the variable custPurchase
 		var custPurchase = {
 			item_id: res.item_id,
-			stock_quantity: res.stock_quantity
+			//THAT where it goes res.key =)
+			stock_quantity: res.Quantity
 		};
 		
 		//the variable established above is pushed to the productPurchased array defined at the top of the page
@@ -71,10 +73,10 @@ var purchase = function(){
 				//if the stock quantity available is less than the amount that the user wanted to purchase then the user will be alerted that the product is out of stock
 				if(res[0].stock_quantity < productPurchased[0].stock_quantity){
 					console.log('That product is out of stock!');
-					connection.end();
+				}
 
 				//otherwise if the stock amount available is more than or equal to the amount being asked for then the purchase is continued and the user is alerted of what items are being purchased, how much one item is and what the total amount is
-				} else if(res[0].stock_quantity >= productPurchased[0].stock_quantity){
+				else if(res[0].stock_quantity >= productPurchased[0].stock_quantity){
 
 					console.log('');
 
@@ -86,9 +88,9 @@ var purchase = function(){
 					var saleTotal = res[0].price * productPurchased[0].stock_quantity;
 
 					//connect to the mysql database Departments and updates the saleTotal for the id of the item purchased
-					connection.query("UPDATE Departments SET TotalSales = ? WHERE department_name = ?;", [saleTotal, res[0].department_name], function(err, resultOne){
+					connection.query("UPDATE Departments SET TotalSales = ? WHERE department_name = ?;", [saleTotal, res[0].department_name], function(err, response){
 						if(err) console.log('error: ' + err);
-						return resultOne;
+						return response;
 					})
 
 					console.log('Total: ' + saleTotal);
